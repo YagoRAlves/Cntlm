@@ -9,11 +9,10 @@ for secret in $(oc get secrets -n "$namespace" -o jsonpath='{.items[*].metadata.
   echo "$data" | grep -q '^[[:space:]]*{}' && continue
   for key in $(echo "$data" | sed 's/[{}"]//g' | tr ',' '\n' | cut -d: -f1); do
     val=$(oc get secret "$secret" -n "$namespace" -o jsonpath="{.data.$key}" 2>/dev/null | base64 -d 2>/dev/null)
-    if echo "$val" | grep -qi "materaRW"; then
+    if echo "$val" | grep -qi 'materaRW\|materaRO'; then
       echo "Namespace: $namespace | Secret: $secret | Key: $key"
       echo "$val"
       echo "-------------------------------"
     fi
   done
 done
-
